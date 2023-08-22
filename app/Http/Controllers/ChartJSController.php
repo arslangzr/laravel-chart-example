@@ -15,9 +15,14 @@ class ChartJSController extends Controller
      */
     public function index()
     {
-        $users = User::select(DB::raw("COUNT(*) as count"), DB::raw("MONTHNAME(created_at) as month_name"))
+        $users = User::select(
+            DB::raw("COUNT(*) as count"),
+            DB::raw("MONTHNAME(created_at) as month_name"),
+            DB::raw("MONTH(created_at) as month_number")
+        )
             ->whereYear('created_at', date('Y'))
-            ->groupBy(DB::raw("Month(created_at)"))
+            ->groupBy('month_number', 'month_name')
+            ->orderBy('month_number')
             ->pluck('count', 'month_name');
 
         $labels = $users->keys();
